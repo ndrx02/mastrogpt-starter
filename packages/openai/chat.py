@@ -93,11 +93,12 @@ def main(args):
             "message": "You can chat with OpenAI."
         }
 
-        #prova con email
+        #prova con email (la chat sembra che venga riavviata allo stato iniziale)
         input_test = "test@gmail.com is legit?"
         test = ask(input_test)
         print(test)
         extract(input_test)
+        res["output"] = test
     else:
         output = ask(input)
         res = extract(output)
