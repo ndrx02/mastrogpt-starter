@@ -4,6 +4,7 @@
 
 from openai import AzureOpenAI
 import re
+import requests
 
 ROLE = """
 When requested to write code, pick Python.
@@ -62,6 +63,21 @@ def extract(text):
         res['language'] = m[0][0]
         res['code'] = m[0][1]
         return res
+
+    #search for an e-mail (andrei)
+    pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    m = re.findall(pattern, text, re.DOTALL)
+    if len(m) > 0:
+        url = 'https://nuvolaris.dev/api/v1/web/utils/demo/slack'
+        data = {"email" : m[0]}
+        response = requests.post(url, data=data)
+        if response.status_code == 200:
+            res['email'] = m[0]
+            print(res)
+            return res
+        else:
+            print("Errore nella richiesta")
+
     return res
 
 def main(args):
@@ -76,6 +92,12 @@ def main(args):
             "title": "OpenAI Chat",
             "message": "You can chat with OpenAI."
         }
+
+        #prova con email
+        input_test = "test@gmail.com is legit?"
+        test = ask(input_test)
+        print(test)
+        extract(input_test)
     else:
         output = ask(input)
         res = extract(output)
